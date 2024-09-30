@@ -2,6 +2,7 @@ import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import Droppable from "./droppable";
 import Draggable from "./draggable";
 import { useState } from "react";
+import { Button } from "./ui/button";
 
 interface Task {
   id: number;
@@ -56,24 +57,31 @@ const TodoContainer: React.FC = () => {
     }
   };
   return (
-    <DndContext onDragEnd={onDragEnd}>
-      <div className="grid grid-cols-3 gap-10">
-        {list.map((item) => (
-          <Droppable id={item} key={item}>
-            <h1 className="py-6 text-xl">{item}</h1>
-            <div className="space-y-4">
-              {getTasks(item).map((task) => (
-                <Draggable id={task.id} key={task.id}>
-                  <div className={`p-4 rounded-md ${getTaskColor(task.type)}`}>
-                    {task.name}
-                  </div>
-                </Draggable>
-              ))}
-            </div>
-          </Droppable>
-        ))}
+    <>
+      <div>
+        <Button>Click ME</Button>
       </div>
-    </DndContext>
+      <DndContext onDragEnd={onDragEnd}>
+        <div className="grid grid-cols-3 gap-10">
+          {list.map((item) => (
+            <Droppable id={item} key={item}>
+              <h1 className="py-6 text-xl">{item}</h1>
+              <div className="space-y-4">
+                {getTasks(item).map((task) => (
+                  <Draggable id={task.id} key={task.id}>
+                    <div
+                      className={`p-4 rounded-md ${getTaskColor(task.type)}`}
+                    >
+                      {task.name}
+                    </div>
+                  </Draggable>
+                ))}
+              </div>
+            </Droppable>
+          ))}
+        </div>
+      </DndContext>
+    </>
   );
 };
 
