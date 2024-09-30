@@ -13,11 +13,11 @@ const TodoContainer: React.FC = () => {
   const list = ["add Todo", "in Progress", "completed"];
 
   const todotasks: Task[] = [
-    { id: 1, name: "Learning JS", type: "add Todo" },
-    { id: 2, name: "Learning React.js", type: "add Todo" },
-    { id: 3, name: "Learning Express.js", type: "add Todo" },
-    { id: 4, name: "Learning MongoDB", type: "add Todo" },
-    { id: 5, name: "Becoming a fullstack developer", type: "add Todo" },
+    { id: 1, name: "Do exercise", type: "add Todo" },
+    { id: 2, name: "Eat well", type: "add Todo" },
+    { id: 3, name: "Do shower", type: "add Todo" },
+    { id: 4, name: "Read Books", type: "add Todo" },
+    { id: 5, name: "Sleep at 11 pm", type: "add Todo" },
   ];
 
   const [tasks, setTasks] = useState<Task[]>([...todotasks]);
@@ -38,9 +38,23 @@ const TodoContainer: React.FC = () => {
       );
     }
   };
+  console.log(tasks);
 
-  const getTasks = (type: string) => tasks.filter((item) => item.type === type);
+  const getTasks = (type: string): Task[] => {
+    return tasks.filter((item) => item.type === type);
+  };
 
+  console.log(getTasks);
+
+  const getTaskColor = (type: string) => {
+    if (type === "add Todo") {
+      return "bg-red-100";
+    } else if (type === "in Progress") {
+      return "bg-blue-100";
+    } else {
+      return "bg-green-100";
+    }
+  };
   return (
     <DndContext onDragEnd={onDragEnd}>
       <div className="grid grid-cols-3 gap-10">
@@ -50,7 +64,9 @@ const TodoContainer: React.FC = () => {
             <div className="space-y-4">
               {getTasks(item).map((task) => (
                 <Draggable id={task.id} key={task.id}>
-                  {task.name}
+                  <div className={`p-4 rounded-md ${getTaskColor(task.type)}`}>
+                    {task.name}
+                  </div>
                 </Draggable>
               ))}
             </div>
