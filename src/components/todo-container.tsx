@@ -2,10 +2,11 @@ import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import Droppable from "./droppable";
 import Draggable from "./draggable";
 import { useState } from "react";
-import { Button } from "./ui/button";
+import { v4 as uuidv4 } from "uuid";
+import AddTodoPopup from "./popup/add-todo-popup";
 
 interface Task {
-  id: number;
+  id: string;
   name: string;
   type: string;
 }
@@ -13,21 +14,26 @@ interface Task {
 const TodoContainer: React.FC = () => {
   const list = ["add Todo", "in Progress", "completed"];
 
-  const todotasks: Task[] = [
-    { id: 1, name: "Do exercise", type: "add Todo" },
-    { id: 2, name: "Eat well", type: "add Todo" },
-    { id: 3, name: "Do shower", type: "add Todo" },
-    { id: 4, name: "Read Books", type: "add Todo" },
-    { id: 5, name: "Sleep at 11 pm", type: "add Todo" },
-  ];
+  const [todos, setTodos] = useState<Task[]>([]);
 
-  const [tasks, setTasks] = useState<Task[]>([...todotasks]);
+  const addTodo = (newTodo: string) => {
+    setTodos((prevTodos) => [
+      ...prevTodos,
+      {
+        id: uuidv4(),
+        name: newTodo,
+        type: "add Todo",
+      },
+    ]);
+  };
+
+  console.log("Todos🥹", todos);
 
   const onDragEnd = (event: DragEndEvent) => {
     const { over, active } = event;
     if (over && active) {
-      setTasks(
-        tasks.map((item) => {
+      setTodos(
+        todos.map((item) => {
           if (item.id === active.id) {
             return {
               ...item,
@@ -39,13 +45,10 @@ const TodoContainer: React.FC = () => {
       );
     }
   };
-  console.log(tasks);
 
   const getTasks = (type: string): Task[] => {
-    return tasks.filter((item) => item.type === type);
+    return todos.filter((item) => item.type === type);
   };
-
-  console.log(getTasks);
 
   const getTaskColor = (type: string) => {
     if (type === "add Todo") {
@@ -59,7 +62,7 @@ const TodoContainer: React.FC = () => {
   return (
     <>
       <div>
-        <Button>Click ME</Button>
+        <AddTodoPopup addTodo={addTodo} />
       </div>
       <DndContext onDragEnd={onDragEnd}>
         <div className="grid grid-cols-3 gap-10">
