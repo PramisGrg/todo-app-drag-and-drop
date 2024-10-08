@@ -5,6 +5,7 @@ interface DroppableProps {
   id: string;
   children: ReactNode;
 }
+
 const Droppable: React.FC<DroppableProps> = ({ id, children }) => {
   const { setNodeRef } = useDroppable({ id });
   return <div ref={setNodeRef}>{children}</div>;

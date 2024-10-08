@@ -69,14 +69,14 @@ const TodoContainer: React.FC = () => {
           {list.map((item) => (
             <Droppable id={item} key={item}>
               <h1 className="py-6 text-xl">{item}</h1>
-              <div className="space-y-4">
+              <div className="space-y-8 min-h-[500px] p-4 rounded-md border bg-accent">
                 {getTasks(item).map((task) => (
                   <Draggable id={task.id} key={task.id}>
                     <div
                       className={`p-4 rounded-md ${getTaskColor(task.type)}`}
                     >
                       {task.name}
-                    </div>n
+                    </div>
                   </Draggable>
                 ))}
               </div>

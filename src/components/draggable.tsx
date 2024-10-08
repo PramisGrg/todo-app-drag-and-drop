@@ -18,7 +18,7 @@ const Draggable: React.FC<DraggableProps> = ({ id, children }) => {
   return (
     <div
       ref={setNodeRef}
-      className="draggable-item"
+      className="text-accent"
       style={style}
       {...listeners}
       {...attributes}
