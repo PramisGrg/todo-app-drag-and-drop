@@ -76,7 +76,7 @@ const TodoContainer: React.FC = () => {
                       className={`p-4 rounded-md ${getTaskColor(task.type)}`}
                     >
                       {task.name}
-                    </div>
+                    </div>n
                   </Draggable>
                 ))}
               </div>
