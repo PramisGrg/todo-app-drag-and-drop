@@ -1,14 +1,18 @@
-import TodoContainer from "./components/todo-container";
+import Register from "./pages/register";
+import { Toaster } from "sonner";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./pages/login";
 
 function App() {
   return (
     <>
-      <div className="p-20 space-y-6">
-        <h1 className="text-3xl">Simple Todo App</h1>
-        <div>
-          <TodoContainer />
-        </div>
-      </div>
+      <Toaster />
+      <Router>
+        <Routes>
+          <Route path="/" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </Router>
     </>
   );
 }
