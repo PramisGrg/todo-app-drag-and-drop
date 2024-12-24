@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useRegisterQuery } from "@/queries/auth-query";
+import { AxiosError } from "axios";
 
 type registerSchemaType = z.infer<typeof registerSchema>;
 
@@ -22,10 +24,29 @@ const Register = () => {
     resolver: zodResolver(registerSchema),
   });
 
+  const registerUser = useRegisterQuery();
+
   const onSubmit = (values: registerSchemaType) => {
-    toast.success("Yes done");
     console.log("Form Submitted: ", values);
-    navigate("/login");
+    registerUser.mutate(values, {
+      onSuccess: (data) => {
+        console.log(data, "This is data");
+        toast.success(data.message);
+        navigate("/login");
+      },
+      onError: (error) => {
+        if (error instanceof AxiosError) {
+          if (error.response) {
+            toast.error(error.response.data.message || "Something went wrong!");
+          } else {
+            toast.error(error.message || "Something went wrong!");
+          }
+        } else {
+          toast.error("An unexpected error occurred.");
+        }
+        form.reset();
+      },
+    });
   };
 
   return (
