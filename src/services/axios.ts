@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
@@ -7,7 +8,7 @@ export const axiosInstance = axios.create({
   },
 });
 
-const token = "123";
+const token = Cookies.get("token");
 
 export const axiosAuthInstance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,

@@ -13,8 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { useRegisterQuery } from "@/queries/auth-query";
 import { AxiosError } from "axios";
+import { useRegisterQuery } from "@/queries/auth-query";
 
 type registerSchemaType = z.infer<typeof registerSchema>;
 
@@ -27,10 +27,8 @@ const Register = () => {
   const registerUser = useRegisterQuery();
 
   const onSubmit = (values: registerSchemaType) => {
-    console.log("Form Submitted: ", values);
     registerUser.mutate(values, {
       onSuccess: (data) => {
-        console.log(data, "This is data");
         toast.success(data.message);
         navigate("/login");
       },

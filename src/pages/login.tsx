@@ -11,16 +11,44 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { AxiosError } from "axios";
+import Cookies from "js-cookie";
+import { useLoginQuery } from "@/queries/auth-query";
 
 type loginSchemaType = z.infer<typeof loginSchema>;
 
 const Login = () => {
+  const navigate = useNavigate();
   const form = useForm<loginSchemaType>({
     resolver: zodResolver(loginSchema),
   });
 
+  const loginUser = useLoginQuery();
+
   const onSubmit = (values: loginSchemaType) => {
     console.log("Form Submitted: ", values);
+    loginUser.mutate(values, {
+      onSuccess: (data) => {
+        console.log(data, "This is login data");
+        toast.success(data.message);
+        Cookies.set("token", data.data.token);
+        navigate("/home");
+      },
+      onError: (error) => {
+        if (error instanceof AxiosError) {
+          if (error.response) {
+            toast.error(error.response.data.message || "Something went wrong!");
+          } else {
+            toast.error(error.message || "Something went wrong!");
+          }
+        } else {
+          toast.error("An unexpected error occurred.");
+        }
+        form.reset();
+      },
+    });
   };
 
   return (

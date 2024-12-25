@@ -1,39 +1,66 @@
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import Droppable from "./droppable";
 import Draggable from "./draggable";
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { useEffect, useState } from "react";
 import AddTodoPopup from "./popup/add-todo-popup";
+import { useCreateTodoQuery, useGetTodoQuery } from "@/queries/todo-query";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 interface Task {
   id: string;
-  name: string;
-  type: string;
+  addTodo: string;
+  status: string;
 }
 
 const TodoContainer: React.FC = () => {
-  const list = ["add Todo", "in Progress", "completed"];
+  const status = ["ADD", "IN_PROGRESS", "COMPLETED"];
 
-  const [todos, setTodos] = useState<Task[]>([]);
+  const { data: todos } = useGetTodoQuery();
+  const createTodo = useCreateTodoQuery();
+  const [getTodo, setGetTodo] = useState<Task[]>([]);
+
+  useEffect(() => {
+    if (todos?.data) {
+      setGetTodo(todos.data);
+    }
+  }, [todos?.data]);
+
+  console.log(getTodo, "This is getToto dstate");
 
   const addTodo = (newTodo: string) => {
-    setTodos((prevTodos) => [
-      ...prevTodos,
-      {
-        id: uuidv4(),
-        name: newTodo,
-        type: "add Todo",
+    // setGetTodo((prevTodos) => [
+    //   ...prevTodos,
+    //   {
+    //     id: uuidv4(),
+    //     addTodo: newTodo,
+    //     status: "add Todo",
+    //   },
+    // ]);
+    console.log(newTodo);
+    createTodo.mutate(newTodo, {
+      onSuccess: (data) => {
+        toast.success(data.message);
       },
-    ]);
+      onError: (error) => {
+        if (error instanceof AxiosError) {
+          if (error.response) {
+            toast.error(error.response.data.message || "Something went wrong!");
+          } else {
+            toast.error(error.message || "Something went wrong!");
+          }
+        } else {
+          toast.error("An unexpected error occurred.");
+        }
+      },
+    });
   };
-
-  console.log("Todos🥹", todos);
 
   const onDragEnd = (event: DragEndEvent) => {
     const { over, active } = event;
     if (over && active) {
-      setTodos(
-        todos.map((item) => {
+      setGetTodo(
+        getTodo.map((item) => {
           if (item.id === active.id) {
             return {
               ...item,
@@ -46,19 +73,20 @@ const TodoContainer: React.FC = () => {
     }
   };
 
-  const getTasks = (type: string): Task[] => {
-    return todos.filter((item) => item.type === type);
+  const getTasks = (status: string): Task[] => {
+    return getTodo.filter((item) => item.status === status);
   };
 
-  const getTaskColor = (type: string) => {
-    if (type === "add Todo") {
+  const getTaskColor = (status: string) => {
+    if (status === "ADD") {
       return "bg-red-100";
-    } else if (type === "in Progress") {
+    } else if (status === "IN_PROGRESS") {
       return "bg-blue-100";
     } else {
       return "bg-green-100";
     }
   };
+
   return (
     <>
       <div>
@@ -66,16 +94,16 @@ const TodoContainer: React.FC = () => {
       </div>
       <DndContext onDragEnd={onDragEnd}>
         <div className="grid grid-cols-3 gap-10">
-          {list.map((item) => (
+          {status.map((item) => (
             <Droppable id={item} key={item}>
               <h1 className="py-6 text-xl">{item}</h1>
               <div className="space-y-8 min-h-[500px] p-4 rounded-md border bg-accent">
                 {getTasks(item).map((task) => (
                   <Draggable id={task.id} key={task.id}>
                     <div
-                      className={`p-4 rounded-md ${getTaskColor(task.type)}`}
+                      className={`p-4 rounded-md ${getTaskColor(task.status)}`}
                     >
-                      {task.name}
+                      {task.addTodo}
                     </div>
                   </Draggable>
                 ))}
