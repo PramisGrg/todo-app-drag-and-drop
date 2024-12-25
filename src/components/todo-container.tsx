@@ -3,7 +3,11 @@ import Droppable from "./droppable";
 import Draggable from "./draggable";
 import { useEffect, useState } from "react";
 import AddTodoPopup from "./popup/add-todo-popup";
-import { useCreateTodoQuery, useGetTodoQuery } from "@/queries/todo-query";
+import {
+  useCreateTodoQuery,
+  useGetTodoQuery,
+  useUpdateTodoQuery,
+} from "@/queries/todo-query";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 
@@ -18,6 +22,7 @@ const TodoContainer: React.FC = () => {
 
   const { data: todos } = useGetTodoQuery();
   const createTodo = useCreateTodoQuery();
+  const updateTodo = useUpdateTodoQuery();
   const [getTodo, setGetTodo] = useState<Task[]>([]);
 
   useEffect(() => {
@@ -25,8 +30,6 @@ const TodoContainer: React.FC = () => {
       setGetTodo(todos.data);
     }
   }, [todos?.data]);
-
-  console.log(getTodo, "This is getToto dstate");
 
   const addTodo = (newTodo: string) => {
     // setGetTodo((prevTodos) => [
@@ -59,17 +62,22 @@ const TodoContainer: React.FC = () => {
   const onDragEnd = (event: DragEndEvent) => {
     const { over, active } = event;
     if (over && active) {
-      setGetTodo(
-        getTodo.map((item) => {
-          if (item.id === active.id) {
-            return {
-              ...item,
-              type: over.id as string,
-            };
-          }
-          return item;
-        })
-      );
+      // setGetTodo(
+      //   getTodo.map((item) => {
+      //     if (item.id === active.id) {
+      //       return {
+      //         ...item,
+      //         type: over.id as string,
+      //       };
+      //     }
+      //     return item;
+      //   })
+      // );
+      console.log(over, active, "This is over and active 🥹🥹");
+      updateTodo.mutate({
+        status: String(over.id),
+        id: String(active.id),
+      });
     }
   };
 
