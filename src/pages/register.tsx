@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import { useRegisterQuery } from "@/queries/auth-query";
 
@@ -105,6 +105,12 @@ const Register = () => {
 
               <Button type="submit">Register</Button>
             </form>
+            <div className="flex text-sm space-x-4">
+              <h1>Already have an account ?</h1>
+              <Link className="underline" to={"/"}>
+                click here
+              </Link>
+            </div>
           </FormProvider>
         </div>
       </div>

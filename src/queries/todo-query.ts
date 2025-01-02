@@ -1,22 +1,14 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { axiosAuthInstance } from "@/services/axios";
-import { UpdateTodoParams } from "@/types/type";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
 
-export const useCreateTodoQuery = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (addTodo: string) => {
-      const response = await axiosAuthInstance.post("/todo/create", {
-        addTodo,
-      });
-      return response.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
-    },
-  });
-};
+interface Todo {
+  id: string;
+  status: string;
+}
+
+interface TodoData {
+  data: Todo[];
+}
 
 export const useGetTodoQuery = () => {
   return useQuery({
@@ -28,22 +20,52 @@ export const useGetTodoQuery = () => {
   });
 };
 
-export const useUpdateTodoQuery = () => {
+export const useCreateTodoQuery = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: async (params: UpdateTodoParams) => {
-      console.log(params);
-      const response = await axiosAuthInstance.patch(
-        `/todo/update/${params.id}`,
-        {
-          status: params.status,
-        }
-      );
+    mutationFn: async (todo: string) => {
+      const response = await axiosAuthInstance.post("/todo/create", {
+        addTodo: todo,
+      });
       return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["todos"] });
-      console.log("success");
+    },
+  });
+};
+
+export const useUpdateTodoQuery = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (params: Todo) => {
+      const response = await axiosAuthInstance.patch(
+        `/todo/update/${params.id}`,
+        { status: params.status }
+      );
+      return response.data;
+    },
+    onMutate: async (newTodo) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
+
+      const previousTodos = queryClient.getQueryData(["todos"]);
+
+      queryClient.setQueryData(["todos"], (old: TodoData) => ({
+        ...old,
+        data: old.data.map((todo: Todo) =>
+          todo.id === newTodo.id ? { ...todo, status: newTodo.status } : todo
+        ),
+      }));
+
+      return { previousTodos };
+    },
+    onError: (_, __, context) => {
+      queryClient.setQueryData(["todos"], context?.previousTodos);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 };

@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { useLoginQuery } from "@/queries/auth-query";
@@ -33,7 +33,11 @@ const Login = () => {
       onSuccess: (data) => {
         console.log(data, "This is login data");
         toast.success(data.message);
-        Cookies.set("token", data.data.token);
+        Cookies.set("token", data.data.token, {
+          path: "/",
+          sameSite: "None",
+          secure: true,
+        });
         navigate("/home");
       },
       onError: (error) => {
@@ -57,7 +61,7 @@ const Login = () => {
         Drag and Drop Todo
       </h1>
       <div className="flex h-screen items-center justify-center">
-        <div className="border p-8 rounded-lg md:w-[32rem] w-[90vw]">
+        <div className="border p-8 rounded-lg md:w-[32rem] space-y-4 w-[90vw]">
           <h1 className="text-center text-xl">Login</h1>
           <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -95,6 +99,12 @@ const Login = () => {
 
               <Button type="submit">Login</Button>
             </form>
+            <div className="text-sm flex space-x-4">
+              <h1>Don't have a account ?</h1>
+              <Link to="/register" className="flex-end underline">
+                click here
+              </Link>
+            </div>
           </FormProvider>
         </div>
       </div>

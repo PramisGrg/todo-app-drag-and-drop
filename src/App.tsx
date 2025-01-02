@@ -1,20 +1,29 @@
 import Register from "./pages/register";
 import { Toaster } from "sonner";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./pages/login";
 import Home from "./pages/home";
 
 function App() {
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Login />,
+    },
+    {
+      path: "/register",
+      element: <Register />,
+    },
+    {
+      path: "/home",
+      element: <Home />,
+    },
+  ]);
+
   return (
     <>
       <Toaster />
-      <Router>
-        <Routes>
-          <Route path="/" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/home" element={<Home />} />
-        </Routes>
-      </Router>
+      <RouterProvider router={router} />
     </>
   );
 }

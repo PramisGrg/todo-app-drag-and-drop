@@ -1,15 +1,15 @@
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
 import Droppable from "./droppable";
 import Draggable from "./draggable";
-import { useEffect, useState } from "react";
 import AddTodoPopup from "./popup/add-todo-popup";
 import {
   useCreateTodoQuery,
   useGetTodoQuery,
   useUpdateTodoQuery,
 } from "@/queries/todo-query";
-import { toast } from "sonner";
-import { AxiosError } from "axios";
 
 interface Task {
   id: string;
@@ -19,7 +19,6 @@ interface Task {
 
 const TodoContainer: React.FC = () => {
   const status = ["ADD", "IN_PROGRESS", "COMPLETED"];
-
   const { data: todos } = useGetTodoQuery();
   const createTodo = useCreateTodoQuery();
   const updateTodo = useUpdateTodoQuery();
@@ -32,15 +31,6 @@ const TodoContainer: React.FC = () => {
   }, [todos?.data]);
 
   const addTodo = (newTodo: string) => {
-    // setGetTodo((prevTodos) => [
-    //   ...prevTodos,
-    //   {
-    //     id: uuidv4(),
-    //     addTodo: newTodo,
-    //     status: "add Todo",
-    //   },
-    // ]);
-    console.log(newTodo);
     createTodo.mutate(newTodo, {
       onSuccess: (data) => {
         toast.success(data.message);
@@ -62,18 +52,6 @@ const TodoContainer: React.FC = () => {
   const onDragEnd = (event: DragEndEvent) => {
     const { over, active } = event;
     if (over && active) {
-      // setGetTodo(
-      //   getTodo.map((item) => {
-      //     if (item.id === active.id) {
-      //       return {
-      //         ...item,
-      //         type: over.id as string,
-      //       };
-      //     }
-      //     return item;
-      //   })
-      // );
-      console.log(over, active, "This is over and active 🥹🥹");
       updateTodo.mutate({
         status: String(over.id),
         id: String(active.id),
