@@ -1,6 +1,6 @@
 # Drag and Drop App
 
-A simple and intuitive to-do list application with drag-and-drop functionality to organize tasks efficiently. This project is designed to be user-friendly, responsive, and visually appealing.
+A simple and intuitive to-do list application with drag-and-drop functionality to organize tasks efficiently. This project is designed to be user-friendly, responsive using tanstack optimistic update.
 
 ## Live Demo
 
