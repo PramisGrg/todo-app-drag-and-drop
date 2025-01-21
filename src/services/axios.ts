@@ -8,12 +8,17 @@ export const axiosInstance = axios.create({
   },
 });
 
-const token = Cookies.get("token");
-
 export const axiosAuthInstance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
   headers: {
-    Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
   },
+});
+
+axiosAuthInstance.interceptors.request.use((config) => {
+  const token = Cookies.get("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });

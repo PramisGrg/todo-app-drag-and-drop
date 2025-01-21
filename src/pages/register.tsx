@@ -30,7 +30,7 @@ const Register = () => {
     registerUser.mutate(values, {
       onSuccess: (data) => {
         toast.success(data.message);
-        navigate("/login");
+        navigate("/");
       },
       onError: (error) => {
         if (error instanceof AxiosError) {

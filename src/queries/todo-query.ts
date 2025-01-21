@@ -47,23 +47,28 @@ export const useUpdateTodoQuery = () => {
       );
       return response.data;
     },
+
     onMutate: async (newTodo) => {
       await queryClient.cancelQueries({ queryKey: ["todos"] });
 
       const previousTodos = queryClient.getQueryData(["todos"]);
 
-      queryClient.setQueryData(["todos"], (old: TodoData) => ({
-        ...old,
-        data: old.data.map((todo: Todo) =>
-          todo.id === newTodo.id ? { ...todo, status: newTodo.status } : todo
-        ),
-      }));
+      queryClient.setQueryData(["todos"], (old: TodoData) => {
+        return {
+          ...old,
+          data: old.data.map((todo: Todo) =>
+            todo.id === newTodo.id ? { ...todo, status: newTodo.status } : todo
+          ),
+        };
+      });
 
       return { previousTodos };
     },
+
     onError: (_, __, context) => {
       queryClient.setQueryData(["todos"], context?.previousTodos);
     },
+
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
